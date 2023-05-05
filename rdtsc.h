@@ -1,6 +1,13 @@
 #ifndef __RDTSC_H__
 #define __RDTSC_H__
 
+#include <stdint.h>
+
+#ifdef __UNUSED
+#undef __UNUSED
+#endif
+#define __UNUSED(a) ((void)a)
+
 static inline uint64_t _rdtsc()
 {
 #if defined(__i386__)
@@ -55,6 +62,9 @@ static inline void init_perfcounters(int32_t do_reset, int32_t enable_divider)
     // clear overflows:
     asm volatile ("MCR p15, 0, %0, c9, c12, 3\t\n" :: "r"(0x8000000f));
 #endif
+#else
+    __UNUSED(do_reset);
+    __UNUSED(enable_divider);
 #endif
 }
 

@@ -9,13 +9,17 @@
 #endif
 
 #define bzero(p, l) memset(p, 0, l)
+
+#ifdef _MSC_VER
 #pragma warning(disable:4244)
+#endif
 
 //#define SERIAL_CONNECT
 
 #if !defined(CLS) || CLS==0
 #undef CLS
 #define CLS 64			// Cache Line Size
+#error "CLS is wrong"
 #endif
 #define NPAD ((CLS-sizeof(struct l*))/sizeof(uint64_t))
 
@@ -73,16 +77,16 @@ int random_connect(struct l *field, uint64_t n)
     return 1;
 }
 
-inline uint32_t div64(uint64_t a, uint64_t b)
+uint32_t div64(uint64_t a, uint64_t b)
 {
 #if defined (__i386__) || defined(__arm__)
     return __divti3(a, b);
 #else
-    return a/b;
+    return (uint32_t)(a/b);
 #endif
 }
 
-uint64_t do_read_test(struct l *field, uint64_t n, unsigned cycles)
+uint64_t do_read_test(struct l *field, uint64_t n __attribute_maybe_unused__, unsigned cycles)
 {
     struct l *a;
     uint64_t end, beg;
@@ -94,7 +98,7 @@ uint64_t do_read_test(struct l *field, uint64_t n, unsigned cycles)
         count++;
         a = a->next;
     } while (a != field);
-    beg=__rdtsc();
+    beg=_rdtsc();
     for(i=0; i<cycles; i++)
     {
         count = 0;
@@ -105,18 +109,18 @@ uint64_t do_read_test(struct l *field, uint64_t n, unsigned cycles)
             a = a->next;
         } while (a != field);
     }
-    end=__rdtsc();
+    end = _rdtsc();
     //  printf("%lld %lld %lld\n", beg, end, end-beg);
     return end-beg;
 }
 
-uint64_t do_write_test(struct l *field, uint64_t n, unsigned cycles)
+uint64_t do_write_test(struct l *field, uint64_t n __attribute_maybe_unused__, unsigned cycles)
 {
     struct l *a;
     uint64_t end, beg;
     register unsigned i;
 
-    beg = __rdtsc();
+    beg = _rdtsc();
     for (i = 0; i<cycles; i++)
     {
         count = 0;
@@ -127,7 +131,7 @@ uint64_t do_write_test(struct l *field, uint64_t n, unsigned cycles)
             a = a->next;
         } while (a != field);
     }
-    end = __rdtsc();
+    end = _rdtsc();
     //  printf("%lld %lld %lld\n", beg, end, end-beg);
     return end - beg;
 }
