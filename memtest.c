@@ -19,7 +19,6 @@
 #if !defined(CLS) || CLS==0
 #undef CLS
 #define CLS 64			// Cache Line Size
-#error "CLS is wrong"
 #endif
 #define NPAD ((CLS-sizeof(struct l*))/sizeof(uint64_t))
 
@@ -191,7 +190,7 @@ uint64_t run_test(unsigned fsize, unsigned cycles, generator_t generator, tester
     return testtime;
 }
 
-uint32_t sizes[]={8, 16, 24, 32, 40, 48, 64, 128, 256, 384, 512, 768, 1024, 1536, 2048, 3*1024, 4*1024, 5*1024, 6*1024, 7*1024, 8*1024, 9*1024, 10*1024, 20*1024, 30*1024, 0};
+uint32_t sizes[]={8, 16, 24, 32, 40, 48, 64, 128, 256, 384, 512, 768, 1024, 1536, 2048, 3*1024, 4*1024, 5*1024, 6*1024, 7*1024, 8*1024, 9*1024, 10*1024, 12*1024, 20*1024, 30*1024, 0};
 
 int main(void)
 {
